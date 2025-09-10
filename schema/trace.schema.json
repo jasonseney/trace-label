@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TRACE v0.1 Schema",
+  "type": "object",
+  "properties": {
+    "trace": {
+      "type": "object",
+      "required": [
+        "version",
+        "level",
+        "modality",
+        "human",
+        "date"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "enum": [
+            "0.1"
+          ]
+        },
+        "level": {
+          "type": "string",
+          "pattern": "^U[0-5]$"
+        },
+        "modality": {
+          "type": "string"
+        },
+        "human": {
+          "type": "object",
+          "properties": {
+            "review": {
+              "type": "boolean"
+            }
+          }
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+  },
+  "required": [
+    "trace"
+  ]
+}

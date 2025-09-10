@@ -1,0 +1,11 @@
+{
+  "trace": {
+    "version": "0.1",
+    "level": "U4",
+    "modality": "video",
+    "human": {
+      "review": true
+    },
+    "date": "2025-09-07"
+  }
+}
