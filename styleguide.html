@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TRACE Style Guide v0.1 — Transparent Reporting of AI Content & Editing</title>
+<meta name="description" content="Official TRACE v0.1 style guide for implementing [TRACE U_] labels and metadata across publishing platforms." />
+<meta name="trace" content="[TRACE U3 +SR]">
+<style>
+  :root{
+    /* Brand Colors */
+    --deepblum: #5C3A5B;  /* Primary badge color */
+    --ink: #221E22;       /* Primary text */
+    --snow: #FAFAFC;      /* Page background */
+    --ash-900:#101317;
+    --ash-800:#131820;
+    --ash-700:#1B212B;
+    --ash-600:#2A313D;
+    --ash-500:#3C4655;
+    --ash-400:#6B7178;
+    --ash-300:#A2A7AE;
+    --ash-200:#D1D5DB;
+    --ash-100:#E9EBEF;
+    --accent-amber:#D98E04; /* Highlight callouts */
+    --ok:#2e7d32; --warn:#c77800; --err:#b00020;
+
+    /* Spacing Scale (8pt-based) */
+    --s-1:4px; --s0:8px; --s1:12px; --s2:16px; --s3:20px; --s4:24px; --s5:32px; --s6:40px; --s7:48px; --s8:64px;
+
+    /* Typography (system UI stack for GitHub-safe rendering) */
+    --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* Badge sizing */
+    --badge-h: 28px;
+    --badge-pad-x: 10px;
+    --badge-radius: 8px;
+  }
+  html,body{height:100%;}
+  body{
+    background: var(--snow);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    margin:0;
+  }
+  .wrap{max-width: 1040px; margin: 0 auto; padding: var(--s7) var(--s4);}
+  header{
+    border-bottom: 2px solid var(--ash-100);
+    padding-bottom: var(--s4);
+    margin-bottom: var(--s6);
+  }
+  h1{font-size: 34px; letter-spacing: .2px; margin: 0 0 var(--s1);}
+  .subtitle{color: var(--ash-500); margin-top: 0;}
+  h2{margin-top: var(--s7); font-size: 24px;}
+  h3{margin-top: var(--s5); font-size: 18px;}
+  p,li{color: var(--ink);}
+  .kicker{font-weight:600; text-transform: uppercase; letter-spacing: .06em; color: var(--ash-400); margin-bottom: var(--s1);}
+  code, pre{font-family: var(--font-mono); font-size: 13.5px;}
+  pre{background: #fff; border:1px solid var(--ash-100); border-radius: 10px; padding: var(--s3); overflow:auto;}
+  .grid{display:grid; gap: var(--s4);}
+  .grid.cols-2{grid-template-columns: repeat(2, minmax(0,1fr));}
+  .grid.cols-3{grid-template-columns: repeat(3, minmax(0,1fr));}
+  .card{
+    background:#fff; border:1px solid var(--ash-100); border-radius: 14px; padding: var(--s4);
+    box-shadow: 0 1px 0 rgba(16,19,23,.03);
+  }
+  .swatch{
+    border-radius: 12px; height: 80px; margin-bottom: var(--s2);
+    border:1px solid rgba(0,0,0,.06);
+  }
+  .row{display:flex; gap: var(--s3); align-items:center; flex-wrap: wrap;}
+  .muted{color: var(--ash-400);}
+  .note{border-left:4px solid var(--accent-amber); background:#fff8e6; padding: var(--s2) var(--s3); border-radius: 8px;}
+  .ok{color:var(--ok);} .warn{color:var(--warn);} .err{color:var(--err);}
+  .kbd{border:1px solid var(--ash-200); background:#fff; border-radius:6px; padding: 1px 6px; font-family: var(--font-mono); font-size: 12px;}
+  .pill{
+    display:inline-flex; align-items:center; height: var(--badge-h); padding: 0 var(--badge-pad-x);
+    border-radius: var(--badge-radius); color: #fff; background: var(--deepblum);
+    font-family: var(--font-mono); font-weight:700; letter-spacing:.02em; font-size: 13px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.1);
+  }
+  .pill.light{background:#7d597b;}
+  .pill.dark{background:#432b42;}
+  .pill.small{height:24px; font-size:12px;}
+  .pill.large{height:34px; font-size:14px;}
+  .pill + .hint{margin-left: var(--s2); color: var(--ash-400); font-size: 13px; text-decoration: underline; cursor: default;}
+  .divider{height:1px; background: var(--ash-100); margin: var(--s6) 0;}
+  .mono{font-family: var(--font-mono);}
+  .do{border-left: 4px solid var(--ok); padding-left: var(--s2);}
+  .dont{border-left: 4px solid var(--err); padding-left: var(--s2);}
+  .layout-ex{display:grid; grid-template-columns: 1fr 320px; gap: var(--s4);}
+  .example-box{border:1px dashed var(--ash-200); border-radius: 10px; padding: var(--s3); background:#fff;}
+  .section-lead{font-weight:600; color: var(--ash-500); margin-bottom: var(--s2);}
+  footer{margin-top: var(--s7); padding-top: var(--s4); border-top:1px solid var(--ash-100); font-size: 13px; color: var(--ash-400);}
+  a{color:#0059d6; text-decoration: none;} a:hover{text-decoration: underline;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>TRACE Style Guide v0.1</h1>
+      <p class="subtitle">Transparent Reporting of AI Content &amp; Editing — Implementation guidance for the <span class="mono">[TRACE U_]</span> label and metadata.</p>
+      <div class="row" style="margin-top:var(--s3)">
+        <span class="pill">[TRACE U3]</span>
+        <span class="pill light">[TRACE U4 +PR]</span>
+        <span class="pill dark">[TRACE U2 +SR]</span>
+      </div>
+    </header>
+
+    <section>
+      <div class="kicker">Overview</div>
+      <h2>Purpose &amp; Scope</h2>
+      <p>TRACE is a neutral, tiered disclosure that makes AI involvement obvious at a glance. This guide specifies how to render the <span class="mono">[TRACE U_]</span> badge and where to surface additional metadata so audiences quickly recognize the label across platforms.</p>
+      <ul>
+        <li><strong>Audience:</strong> product &amp; design teams, content platforms, CMS vendors, creators &amp; publishers.</li>
+        <li><strong>Non-negotiable:</strong> Always render the label with square brackets, e.g. <span class="mono">[TRACE U3]</span>.</li>
+        <li><strong>Neutrality:</strong> The label informs; it does not judge quality.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="kicker">Brand System</div>
+      <h2>Color &amp; Type</h2>
+      <div class="grid cols-3">
+        <div class="card">
+          <div class="swatch" style="background:var(--deepblum)"></div>
+          <strong>DeepBlum</strong><br/>
+          <code>#5C3A5B</code><br/>
+          <span class="muted">Primary badge background</span>
+        </div>
+        <div class="card">
+          <div class="swatch" style="background:var(--ink)"></div>
+          <strong>Ink</strong><br/>
+          <code>#221E22</code><br/>
+          <span class="muted">Primary text</span>
+        </div>
+        <div class="card">
+          <div class="swatch" style="background:var(--snow); border:1px solid var(--ash-200)"></div>
+          <strong>Snow</strong><br/>
+          <code>#FAFAFC</code><br/>
+          <span class="muted">Background</span>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:var(--s4)">
+        <div class="card">
+          <h3>Typography</h3>
+          <p><strong>Primary:</strong> System UI sans-serif (no external webfonts for GitHub safety).</p>
+          <p><strong>Monospace:</strong> System UI mono for labels &amp; code.</p>
+          <div class="divider"></div>
+          <p class="mono"><span class="pill">[TRACE U3]</span> — badge uses mono for instant scannability.</p>
+        </div>
+        <div class="card">
+          <h3>Spacing</h3>
+          <p>Base grid: 8pt. Common paddings: 8, 12, 16, 24, 32. Card radius: 10–14px. Badge radius: 8px.</p>
+          <p class="muted">Keep whitespace generous around the badge for recognition.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">Badge</div>
+      <h2>Badge Specification</h2>
+      <div class="card">
+        <div class="row" style="margin-bottom:var(--s3)">
+          <span class="pill">[TRACE U1]</span>
+          <span class="pill">[TRACE U2]</span>
+          <span class="pill">[TRACE U3]</span>
+          <span class="pill">[TRACE U4]</span>
+          <span class="pill">[TRACE U5]</span>
+        </div>
+        <ul>
+          <li><strong>Text:</strong> always include square brackets, e.g. <span class="mono">[TRACE U4]</span>.</li>
+          <li><strong>Typeface:</strong> monospace, bold (700), letter-spacing ~0.02em.</li>
+          <li><strong>Color:</strong> background <span class="mono">#5C3A5B</span>, text <span class="mono">#FFFFFF</span>.</li>
+          <li><strong>Shape:</strong> rounded rectangle (8px radius).</li>
+          <li><strong>Sizes:</strong> small (24px), default (28px), large (34px). Keep consistent per surface.</li>
+          <li><strong>Suffixes:</strong> show compactly: <span class="mono">[TRACE U4 +PR +SR]</span>.</li>
+        </ul>
+        <div class="divider"></div>
+        <p class="section-lead">Do &amp; Don’t</p>
+        <div class="grid cols-2">
+          <div class="do">
+            <p>✅ Use square brackets; keep contrast high; place near title/byline/controls.</p>
+          </div>
+          <div class="dont">
+            <p>❌ Don’t remove brackets; don’t bury the badge below the fold; don’t restyle it to look like an ad.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">Placement</div>
+      <h2>Where to Place the Badge</h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Video Platforms (YouTube-like)</h3>
+          <ul>
+            <li><strong>Primary:</strong> directly under the video title, left-aligned.</li>
+            <li><strong>Secondary:</strong> within the description header or next to channel/byline row.</li>
+            <li><strong>Controls:</strong> optional small duplicate near like/share cluster (for quick reference).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Image/Reel Platforms (Instagram-like)</h3>
+          <ul>
+            <li><strong>Primary:</strong> inline with the caption metadata line (after username/time).</li>
+            <li><strong>Alt:</strong> end of caption text, visible without “more.”</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Writing Platforms (Substack/Medium/LinkedIn)</h3>
+          <ul>
+            <li><strong>Primary:</strong> in the byline/metadata line near date &amp; reading time.</li>
+            <li><strong>Footer:</strong> repeated near licensing/copyright.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Feeds &amp; Cards</h3>
+          <ul>
+            <li><strong>Primary:</strong> in the card metadata strip (below title or next to domain).</li>
+            <li><strong>Accessibility:</strong> include badge text in the accessible name.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:var(--s3)"><strong>“What’s this?” link:</strong> adjacent to the badge should open a lightweight panel or tooltip summarizing level &amp; suffixes, with a link to full metadata.</div>
+    </section>
+
+    <section>
+      <div class="kicker">Metadata</div>
+      <h2>Surfacing Additional Metadata</h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Compact Summary Panel</h3>
+          <p>Trigger: “What’s this?” link next to the badge. Include:</p>
+          <ul>
+            <li><strong>Level:</strong> U0–U5 label name (e.g., “U4 — Generative (Human-reviewed)”).</li>
+            <li><strong>Modality:</strong> text | image | audio | video | multimodal.</li>
+            <li><strong>Human Review:</strong> yes/no; optional authorship.</li>
+            <li><strong>Suffixes:</strong> +PR (Prompt Revealed), +CR (Content Credentials), +SR (Safety Review).</li>
+            <li><strong>Date:</strong> ISO date (YYYY-MM-DD).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Full Details (Drawer / Modal)</h3>
+          <p>Expose the JSON fields for transparency, optionally pretty-formatted:</p>
+<pre>{
+  "trace": {
+    "version": "0.1",
+    "level": "U4",
+    "modality": "video",
+    "human": { "review": true, "authors": ["Channel Team"] },
+    "date": "2025-09-12",
+    "ai": { "role": "generative", "method": "iterative", "models": ["disclosed"] },
+    "safety": ["copyright"],
+    "ext": {
+      "prompt": { "disclosure": "summary", "summary": "AI drafted script; human edited VO and pacing." },
+      "provenance": { "type": "none" }
+    }
+  }
+}</pre>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <h3>Developer Integration Hints</h3>
+      <div class="grid cols-3">
+        <div class="card">
+          <p class="section-lead">Meta tag</p>
+<pre>&lt;meta name="trace" content="[TRACE U4 +PR]"&gt;</pre>
+        </div>
+        <div class="card">
+          <p class="section-lead">Data attribute</p>
+<pre>&lt;article data-trace='{"version":"0.1","level":"U4","modality":"video","human":{"review":true}}'&gt;&lt;/article&gt;</pre>
+        </div>
+        <div class="card">
+          <p class="section-lead">JSON-LD (optional)</p>
+<pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context":"https://trace.spec/0.1",
+  "@type":"CreativeWork",
+  "trace": { "version":"0.1","level":"U4","modality":"video","human":{"review":true} }
+}
+&lt;/script&gt;</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">Accessibility</div>
+      <h2>Accessibility &amp; Localization</h2>
+      <ul>
+        <li><strong>Contrast:</strong> maintain WCAG AA contrast between badge background and text.</li>
+        <li><strong>Screen readers:</strong> include badge text in accessible names (e.g., <span class="mono">aria-label="[TRACE U4]"</span>).</li>
+        <li><strong>Keyboard:</strong> “What’s this?” must be focusable and dismissible via keyboard.</li>
+        <li><strong>Localization:</strong> keep the core token <span class="mono">[TRACE U_]</span> intact; localize the accompanying description text.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="kicker">Examples</div>
+      <h2>UI Placement Examples (Wireframe)</h2>
+      <div class="layout-ex card">
+        <div>
+          <div class="example-box">
+            <p class="muted">Video Title</p>
+            <h3>Bigfoot Vlog — Low Light Forest Hunt</h3>
+            <div class="row" style="margin: var(--s2) 0;">
+              <span class="pill">[TRACE U4 +PR]</span>
+              <span class="hint">What’s this?</span>
+            </div>
+            <p class="muted">1.2M views • 2 days ago</p>
+            <div class="divider"></div>
+            <p class="section-lead">Description</p>
+            <p>Join us deep in the mountains…</p>
+          </div>
+        </div>
+        <aside>
+          <div class="example-box">
+            <p class="section-lead">Compact Panel</p>
+            <ul class="muted">
+              <li>Level: U4 — Generative (Human-reviewed)</li>
+              <li>Modality: video</li>
+              <li>Human review: true</li>
+              <li>Date: 2025-09-12</li>
+              <li>Suffixes: +PR</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">Compliance</div>
+      <h2>Do / Don’t for Platforms</h2>
+      <div class="grid cols-2">
+        <div class="card do">
+          <ul>
+            <li>Place <span class="mono">[TRACE U_]</span> near the title/byline or control cluster.</li>
+            <li>Provide a one-click “What’s this?” summary and a link to full details.</li>
+            <li>Respect the square brackets and the U-level format.</li>
+            <li>Cache and expose JSON metadata via API for downstream consumers.</li>
+          </ul>
+        </div>
+        <div class="card dont">
+          <ul>
+            <li>Don’t hide the badge behind multiple clicks or below the fold.</li>
+            <li>Don’t restyle the token (e.g., remove brackets) or change its wording.</li>
+            <li>Don’t blend it into ads or sponsored UI; it must read as provenance/label.</li>
+            <li>Don’t require creators to disclose secrets/PII; summaries are acceptable.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p><strong>TRACE v0.1</strong> — Transparent Reporting of AI Content &amp; Editing. The specification is open and versioned; brand assets governed by maintainers. Badge always rendered as <span class="mono">[TRACE U_]</span>. Questions or proposals? Open an issue in the GitHub repo.</p>
+    </footer>
+  </div>
+</body>
+</html>
