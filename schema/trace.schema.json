@@ -1,47 +1,225 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.org/trace.schema.json",
   "title": "TRACE v0.1 Schema",
   "type": "object",
+  "additionalProperties": false,
+  "required": ["trace"],
+
   "properties": {
     "trace": {
       "type": "object",
-      "required": [
-        "version",
-        "level",
-        "modality",
-        "human",
-        "date"
-      ],
+      "description": "TRACE self-label metadata",
+      "additionalProperties": false,
+      "required": ["version", "level", "modality", "human", "date"],
       "properties": {
         "version": {
           "type": "string",
-          "enum": [
-            "0.1"
-          ]
+          "enum": ["0.1"],
+          "description": "TRACE spec version"
         },
+
         "level": {
           "type": "string",
-          "pattern": "^U[0-5]$"
+          "pattern": "^U[0-5]$",
+          "description": "Overall AI involvement tier (U0–U5)"
         },
+
         "modality": {
-          "type": "string"
+          "type": "string",
+          "enum": ["text", "image", "audio", "video", "multimodal"],
+          "description": "Primary content modality"
         },
+
         "human": {
           "type": "object",
+          "description": "Human oversight and attribution",
+          "additionalProperties": false,
+          "required": ["review"],
           "properties": {
             "review": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Whether a human approved the final output"
+            },
+            "authors": {
+              "type": "array",
+              "description": "Optional list of credited human authors",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1,
+              "uniqueItems": true
             }
           }
         },
+
         "date": {
           "type": "string",
-          "format": "date"
+          "format": "date",
+          "description": "Label/publication date (ISO 8601, YYYY-MM-DD)"
+        },
+
+        "ai": {
+          "type": "object",
+          "description": "Compact description of AI participation",
+          "additionalProperties": false,
+          "properties": {
+            "role": {
+              "type": "string",
+              "enum": ["utility", "assistive", "coauthor", "generative", "autonomous"],
+              "description": "Functional role of AI"
+            },
+            "method": {
+              "type": "string",
+              "enum": ["single_prompt", "iterative", "template", "finetuned", "agentic_pipeline"],
+              "description": "High-level process used"
+            },
+            "models": {
+              "description": "Either a simple disclosure flag or a list of model families",
+              "anyOf": [
+                { "type": "string", "enum": ["disclosed", "undisclosed"] },
+                {
+                  "type": "array",
+                  "items": { "type": "string", "minLength": 1 },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              ]
+            }
+          }
+        },
+
+        "safety": {
+          "type": "array",
+          "description": "Safety/compliance checks performed prior to publishing",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+
+        "ext": {
+          "type": "object",
+          "description": "Optional extended metadata for platforms and power users",
+          "additionalProperties": false,
+
+          "properties": {
+            "apps": {
+              "type": "array",
+              "description": "Applications used in the workflow",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "provider": { "type": "string" },
+                  "version": { "type": "string" },
+                  "mode": { "type": "string", "enum": ["web", "desktop", "mobile", "api"] }
+                }
+              }
+            },
+
+            "models": {
+              "type": "array",
+              "description": "Detailed model identifiers and usage",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "provider": { "type": "string" },
+                  "version": { "type": "string" },
+                  "id": { "type": "string" },
+                  "usage": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "share": { "type": "string", "enum": ["minority", "majority", "entirety"] },
+                      "purpose": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+
+            "pipeline": {
+              "type": "array",
+              "description": "Ordered processing steps for reproducibility/audit",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["step"],
+                "properties": {
+                  "step": { "type": "string", "minLength": 1 },
+                  "app": { "type": "string" },
+                  "model": { "type": "string" },
+                  "version": { "type": "string" },
+                  "iterations": { "type": "integer", "minimum": 0 },
+                  "note": { "type": "string" }
+                }
+              }
+            },
+
+            "data": {
+              "type": "object",
+              "description": "High-level data provenance (no PII or secrets)",
+              "additionalProperties": false,
+              "properties": {
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["original", "commissioned", "public_web", "licensed", "customer", "synthetic"]
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "retrieval": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "used": { "type": "boolean", "description": "Whether retrieval/RAG was used" }
+                  }
+                }
+              }
+            },
+
+            "prompt": {
+              "type": "object",
+              "description": "Prompt disclosure preferences and optional summary",
+              "additionalProperties": false,
+              "properties": {
+                "disclosure": {
+                  "type": "string",
+                  "enum": ["none", "summary", "full"]
+                },
+                "summary": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "description": "Short, human-readable description of prompting; avoid secrets/PII"
+                }
+              }
+            },
+
+            "provenance": {
+              "type": "object",
+              "description": "Linkage to verifiable provenance systems",
+              "additionalProperties": false,
+              "properties": {
+                "type": { "type": "string", "enum": ["none", "content_credentials", "signed_manifest"] },
+                "uri": { "type": "string", "format": "uri" }
+              }
+            }
+          },
+
+          "patternProperties": {
+            "^x-": {}
+          }
         }
+      },
+
+      "patternProperties": {
+        "^x-": {}
       }
     }
-  },
-  "required": [
-    "trace"
-  ]
+  }
 }
