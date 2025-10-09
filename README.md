@@ -1,4 +1,4 @@
-# TRACE v0.1
+# TRACE AI LABEL v0.1
 
 **Transparent Reporting of AI Content & Editing**
 
