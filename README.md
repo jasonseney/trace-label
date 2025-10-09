@@ -58,6 +58,8 @@ The simplest way to start is with **self-labeling**:
   - Tweet: `New AI soundtrack is live! [TRACE U4]`
   - Social Media Photo: `Overlay on image with [TRACE U2]`  May indicate AI edits for object removal and caption help.
   - YouTube description: `Script and cut scenese co-authored with AI [TRACE U3 +PR]`
+ 
+### View the [Styleguide](styleguide.html) for standardization of visual implementation
 
 **Optional suffixes** add more transparency:
 
